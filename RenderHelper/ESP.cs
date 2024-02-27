@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,6 +29,34 @@ public class ESP
     {
         return (SceneManager.GetActiveScene().name == "Main" && Player.main != null && MainCamera.camera != null) ;
     }
+    
+    /*internal static bool IsInGame()
+    {
+        if (SceneManager.GetActiveScene().name == "Main")
+        {
+            if (Player.main != null)
+            {
+                if (MainCamera.camera != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("MAIN CAMERA NOT VALID");
+                }
+            }
+            else
+            {
+                Console.WriteLine("PLAYER NOT VALID");
+            }
+        }
+        else
+        {
+            
+        }
+
+        return false;
+    }*/
     
     internal static float CalculateDistanceToPlayer(Vector3 position)
     {
