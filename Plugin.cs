@@ -25,9 +25,21 @@ public class Plugin : BaseUnityPlugin
         Logger = base.Logger;
         Harmony.CreateAndPatchAll(Assembly, $"{PluginInfo.PLUGIN_GUID}");
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
-        //AddMiniMap();
-        //AddNavigationMap();
+        SceneManager.sceneLoaded += OnSceneLoaded;
         AddResourceFinder();
+    }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CheckAndAddResourceFinder();
+    }
+
+    private void CheckAndAddResourceFinder()
+    {
+        if (FindObjectOfType<ResourceFinderController>() == null)
+        {
+            AddResourceFinder();
+        }
     }
 
     private void Start()
@@ -71,7 +83,7 @@ public class Plugin : BaseUnityPlugin
     private void AddResourceFinder()
     {
         // Crea un nuevo GameObject para el mini mapa
-        GameObject resFinderObject = new GameObject("NavigatorMapController");
+        GameObject resFinderObject = new GameObject("ResourceFinderController");
         // Asegura que el GameObject no sea destruido al cargar una nueva escena
         DontDestroyOnLoad(resFinderObject);
         // Añade el script del mini mapa al GameObject

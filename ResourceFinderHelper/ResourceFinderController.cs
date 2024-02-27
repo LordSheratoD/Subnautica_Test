@@ -14,16 +14,15 @@ public class ResourceFinderController : MonoBehaviour
     private List<StoryHandTarget> _storyHand = new List<StoryHandTarget>();
     private float maxDistance = 25f;  
     private float updateInterval = 1f;
-    private float lastUpdateTime = 0f; // Control de tiempo para actualización
+    private float lastUpdateTime = 0f; 
 
     private void Start()
     {
-        UpdateResources(); // Inicializa la lista en el Start, no en Awake para asegurarse de que todos los objetos estén cargados
+        UpdateResources();
     }
     
     private void Update()
     {
-        // Actualiza recursos basado en intervalo de tiempo en vez de usar InvokeRepeating
         if (ESP.IsInGame())
         {
             if (Time.time - lastUpdateTime >= updateInterval)
@@ -37,16 +36,17 @@ public class ResourceFinderController : MonoBehaviour
     // ReSharper disable Unity.PerformanceAnalysis
     private void UpdateResources()
     {
-        /*_plantable = UnityEngine.Object.FindObjectsOfType<Plantable>()
-            .Where(obj => obj != null && ESP.CalculateDistanceToPlayer(obj.transform.position) <= maxDistance)
-            .ToList();*/
-        _storyHand = UnityEngine.Object.FindObjectsOfType<StoryHandTarget>()
-            .Where(obj => obj != null && ESP.CalculateDistanceToPlayer(obj.transform.position) <= maxDistance)
+        _plantable = UnityEngine.Object.FindObjectsOfType<Plantable>()
+            .Where(obj => obj != null && obj.enabled && obj.transform != null && ESP.CalculateDistanceToPlayer(obj.transform.position) <= maxDistance)
             .ToList();
-        /*_resourceTrackers = UnityEngine.Object.FindObjectsOfType<ResourceTracker>()
-            .Where(obj => obj != null && ESP.CalculateDistanceToPlayer(obj.transform.position) <= maxDistance)
-                                  .ToList();*/
+        _storyHand = UnityEngine.Object.FindObjectsOfType<StoryHandTarget>()
+            .Where(obj => obj != null && obj.enabled && obj.transform != null && ESP.CalculateDistanceToPlayer(obj.transform.position) <= maxDistance)
+            .ToList();
+        _resourceTrackers = UnityEngine.Object.FindObjectsOfType<ResourceTracker>()
+            .Where(obj => obj != null && obj.enabled && obj.transform != null && ESP.CalculateDistanceToPlayer(obj.transform.position) <= maxDistance)
+            .ToList();
     }
+
     
     public static bool WorldToScreen(Vector3 worldPosition, out Vector3 screenPosition)
     {
@@ -108,45 +108,37 @@ public class ResourceFinderController : MonoBehaviour
     {
         if (ESP.IsInGame() && _resourceTrackers != null)
         {
-            /*foreach (var resource in _resourceTrackers)
+            foreach (var resource in _resourceTrackers)
             {
                 // Added null check for resource itself
                 if (resource == null || resource.transform == null) continue;
                 if (resource.enabled == false) continue;
                 if (!WorldToScreen(resource.transform.position, out var screen) || ESP.CalculateDistanceToPlayer(resource.transform.position) > maxDistance) continue;
 
-                Render.DrawDistanceString(screen, GetResourceName(resource), new RGBAColor(0, 255, 0, 255), ESP.CalculateDistanceToPlayer(resource.transform.position));
-            }*/
+                Render.DrawDistanceString(screen, GetResourceName(resource), new RGBAColor(255, 255, 0, 255), ESP.CalculateDistanceToPlayer(resource.transform.position));
+            }
             foreach (var resource in _storyHand)
             {
-                // Added null check for resource itself
                 if (resource == null || resource.transform == null) continue;
                 if (resource.enabled == false) continue;
                 if (!WorldToScreen(resource.transform.position, out var screen) || ESP.CalculateDistanceToPlayer(resource.transform.position) > maxDistance) continue;
 
-                Render.DrawDistanceString(screen, GetResourceName(resource), new RGBAColor(0, 255, 0, 255), ESP.CalculateDistanceToPlayer(resource.transform.position));
+                Render.DrawDistanceString(screen, GetResourceName(resource), new RGBAColor(255, 100, 100, 255), ESP.CalculateDistanceToPlayer(resource.transform.position));
             }
-            /*foreach (var resource in _plantable)
+            foreach (var resource in _plantable)
             {
-                // Added null check for resource itself
                 if (resource == null || resource.transform == null) continue;
+                if (resource.enabled == false) continue;
                 if (!WorldToScreen(resource.transform.position, out var screen) || ESP.CalculateDistanceToPlayer(resource.transform.position) > maxDistance) continue;
 
-                Render.DrawDistanceString(screen, GetResourceName(resource), new RGBAColor(255, 255, 0, 255), ESP.CalculateDistanceToPlayer(resource.transform.position));
-            }*/
-            /*foreach (var resource in _storyHand)
-            {
-                // Added null check for resource itself
-                if (resource == null || resource.transform == null) continue;
-                if (!WorldToScreen(resource.transform.position, out var screen) || ESP.CalculateDistanceToPlayer(resource.transform.position) > maxDistance) continue;
-
-                Render.DrawDistanceString(screen, GetResourceName(resource), new RGBAColor(255, 255, 0, 255), ESP.CalculateDistanceToPlayer(resource.transform.position));
-            }*/
+                Render.DrawDistanceString(screen, GetResourceName(resource), new RGBAColor(55, 255, 0, 255), ESP.CalculateDistanceToPlayer(resource.transform.position));
+            }
         }
         else
         {
             if (_resourceTrackers != null) _resourceTrackers.Clear();
             if (_storyHand != null) _storyHand.Clear();
+            if (_plantable != null) _plantable.Clear();
         }
     }
 
