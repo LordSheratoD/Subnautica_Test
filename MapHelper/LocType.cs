@@ -2,16 +2,9 @@ namespace VisualHelperESP.MapHelper;
 
 public class LocType
 {
-    public enum Tech
+    public enum Communications
     {
-        Data_Box,
-        JukeBox_Disk,
-        Electronics,
-        Material,
-        Equipement,
-        Tool,
-        Fragment,
-        Upgrade_Module
+        PDA
     }
 
     public enum Locations
@@ -25,8 +18,15 @@ public class LocType
         Interest_Point
     }
 
-    public enum Communications
+    public enum Tech
     {
-        PDA
+        Data_Box,
+        JukeBox_Disk,
+        Electronics,
+        Material,
+        Equipement,
+        Tool,
+        Fragment,
+        Upgrade_Module
     }
 }

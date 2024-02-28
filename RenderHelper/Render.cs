@@ -1,3 +1,4 @@
+using System.Globalization;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -5,6 +6,7 @@ namespace VisualHelperESP.RenderHelper;
 
 public class Render
 {
+    public static Texture2D lineTex;
     public static GUIStyle StringStyle { get; set; } = new(GUI.skin.label);
 
     public static Color Color
@@ -42,7 +44,7 @@ public class Render
     public static void DrawDistanceString(Vector2 position, string label, RGBAColor color, float distance,
         bool showDistance = true)
     {
-        if (showDistance) label += "\n" + distance.ToString() + "m";
+        if (showDistance) label += "\n" + distance + "m";
         DrawString(position, label, color.GetColor(), true, true);
     }
 
@@ -75,8 +77,6 @@ public class Render
 
         GUI.Label(new Rect(upperLeft, size), content, style);
     }
-
-    public static Texture2D lineTex;
 
     public static void DrawLine(Vector2 pointA, Vector2 pointB, Color color, float width)
     {
@@ -162,7 +162,7 @@ public class RGBAColor
         {
             if (hexCode.StartsWith("#")) hexCode = hexCode.Substring(1);
 
-            var rgb = int.Parse(hexCode, System.Globalization.NumberStyles.HexNumber);
+            var rgb = int.Parse(hexCode, NumberStyles.HexNumber);
 
             r = hexCode.Length == 8 ? ((rgb >> 24) & 0xFF) / 255f : ((rgb >> 16) & 0xFF) / 255f;
             g = hexCode.Length == 8 ? ((rgb >> 16) & 0xFF) / 255f : ((rgb >> 8) & 0xFF) / 255f;
