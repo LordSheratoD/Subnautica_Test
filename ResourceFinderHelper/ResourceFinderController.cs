@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using VisualHelperESP.RenderHelper;
 
@@ -32,17 +33,32 @@ public class ResourceFinderController : MonoBehaviour
         if (ESP.IsInGame())
         {
             // Comprobación de nulidad para resourceTrackerManager y sus resourceTrackers
-            if (resourceTrackerManager != null && resourceTrackerManager.resourceTrackers != null)
-                foreach (var resource in resourceTrackerManager.resourceTrackers)
+            if (resourceTrackerManager != null)
+            {
+                /*if (resourceTrackerManager.resourceTrackers != null)
                 {
-                    if (resource == null || resource.transform == null) continue;
-                    RenderResource(resource);
+                    foreach (var resource in resourceTrackerManager.resourceTrackers)
+                    {
+                        if (resource == null || resource.transform == null) continue;
+                        RenderResource(resource);
+                    }
+                }*/
+
+                if (resourceTrackerManager.allResource != null)
+                {
+                    foreach (var resource in resourceTrackerManager.allResource)
+                    {
+                        if (resource == null || resource.transform == null) continue;
+                        
+                        RenderTest();
+                    }
                 }
+            }
 
             // Comprobación de nulidad para environmentalObjectManager, plantables y storyHandTargets
             if (environmentalObjectManager != null)
             {
-                if (environmentalObjectManager.plantables != null)
+                /*if (environmentalObjectManager.plantables != null)
                     foreach (var plantable in environmentalObjectManager.plantables)
                     {
                         if (plantable == null || plantable.transform == null) continue;
@@ -54,9 +70,38 @@ public class ResourceFinderController : MonoBehaviour
                     {
                         if (storyHand == null || storyHand.transform == null) continue;
                         RenderStoryHand(storyHand);
-                    }
+                    }*/
+
+                /*if (environmentalObjectManager.fruitPlants != null)
+                    foreach (var fruit in environmentalObjectManager.fruitPlants)
+                    {
+                        if (fruit == null || fruit.transform == null) continue;
+                        RenderFruit(fruit);
+                    }*/
             }
         }
+    }
+
+    private void RenderTest(Pickupable resource)
+    {
+        if (ESP.CalculateDistanceToPlayer(resource.transform.position) > resourceTrackerManager.maxDistance) return;
+        if (!ESP.WorldToScreen(resource.transform.position, out var screen)) return;
+        Render.DrawDistanceString(screen, resourceTrackerManager.GetTestName(resource),
+            new RGBAColor(255, 0, 0, 255), ESP.CalculateDistanceToPlayer(resource.transform.position));
+    }
+
+
+    private void RenderFruit(FruitPlant fruit)
+    {
+        if (ESP.CalculateDistanceToPlayer(fruit.transform.position) >
+            environmentalObjectManager.fruitPlantMaxDistance) return;
+        if (!ESP.WorldToScreen(fruit.transform.position, out var screen)) return;
+        float validFruit = fruit.fruits.Where(obj => obj.isActiveAndEnabled).ToList().Count;
+        if (validFruit <= 0) return;
+        //var fruitPos = fruit.
+        Render.DrawDistanceString(screen,
+            $"{environmentalObjectManager.GetFruitName(fruit.fruits[0])} [{validFruit}/{fruit.fruits.Length}]",
+            new RGBAColor(255, 255, 255, 255), ESP.CalculateDistanceToPlayer(fruit.transform.position));
     }
 
     private void RenderResource(ResourceTracker resource)
